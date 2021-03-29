@@ -22,15 +22,6 @@ pub fn send_confirmation_mail(confirmation: &Confirmation)->Result<(), AuthError
     email = confirmation.email,
     expires = expires
   );
-  let plain_text = format!(
-    "Please visit the link below to complete registration:\n
-    {domain}/register.html?id={id}&email={email}\n
-    This link expires on {expires}.",
-    domain = domain_url,
-    id = confirmation.id,
-    email = confirmation.email,
-    expires = expires
-  );
 
   let plain_text = format!(
     "Please visit the link below to complete registration:\n
