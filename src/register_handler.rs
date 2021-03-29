@@ -1,12 +1,14 @@
 use actix_web::{error::BlockingError, web, HttpResponse};
 use actix_session::Session;
+use diesel::RunQueryDsl;
 use serde::Deserialize;
+
 
 use {
 	super::email_service::send_confirmation_mail,
 	super::errors::AuthError,
 	super::models::{Confirmation, Pool},
-	super::utils::signed_in;
+	super::utils::is_signed_in,
 };
 
 #[derive(Deserialize)]
@@ -16,7 +18,7 @@ pub struct RegisterData{
 
 pub async fn send_confirmation(session: Session,
 	data: web::Json<RegisterData>, pool: web::Data<Pool>)->Result<HttpResponse, AuthError>{
-	if id_signed_in(&session){
+	if is_signed_in(&session){
 		return Ok(HttpResponse::BadRequest().finish());
 	}
 	let result = web::block(move || 

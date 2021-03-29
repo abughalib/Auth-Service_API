@@ -15,13 +15,13 @@ use super::{
 };
 
 #[derive(Debug, Deserialize)]
-pub struct passwordData{
+pub struct PasswordData{
   pub password: String,
 }
 
 pub async fn create_account(session: Session,
   path_id: web::Path<String>,
-  data: web::Json<passwordData>,
+  data: web::Json<PasswordData>,
   pool: web::Data<Pool>) -> Result<HttpResponse, AuthError>{
 
   if is_signed_in(&session){
@@ -29,7 +29,7 @@ pub async fn create_account(session: Session,
   }
   
   let result = web::block(move || 
-    create_user(&path.id.into_inner(), &data.into_inner().password,
+    create_user(&path_id.into_inner(), &data.into_inner().password,
   &pool)).await;
 
   match result{

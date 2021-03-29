@@ -2,12 +2,12 @@
 use diesel::{r2d2::ConnectionManager, PgConnection};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-
+use super::schema::*;
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
-#[table_name="confirmations"]
+#[table_name = "confirmations"]
 pub struct Confirmation{
   pub id: Uuid,
   pub email: String,
@@ -15,7 +15,7 @@ pub struct Confirmation{
 }
 
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
-#[table_name="users"]
+#[table_name = "users"]
 pub struct User{
   pub id: Uuid,
   pub email: String,

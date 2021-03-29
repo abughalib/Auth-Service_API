@@ -11,7 +11,7 @@ table! {
         id -> Uuid,
         email -> Varchar,
         hash -> Varchar,
-        create_at -> Timestamp,
+        created_at -> Timestamp,
     }
 }
 
