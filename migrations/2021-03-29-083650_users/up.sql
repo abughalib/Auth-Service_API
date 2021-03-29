@@ -1,0 +1,7 @@
+-- Your SQL goes here
+CREATE TABLE users(
+  id UUID NOT NULL PRIMARY KEY,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  hash VARCHAR(150) NOT NULL,
+  create_at TIMESTAMP NOT NULL
+);
