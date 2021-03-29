@@ -17,7 +17,8 @@ derive_more = "0.99.13"
 diesel = { version = "1.4.6", features = ["postgres", "uuidv07", "r2d2", "chrono"] }
 dotenv = "0.15.0"
 env_logger = "0.8.3"
-lettre = { git = "https://github.com/lettre/lettre" }
+lettre = "0.9.5"
+lettre_email = "0.9.4"
 native-tls = "0.2.4"
 r2d2 = "0.8.8"
 serde = { version = "1.0", features = ["derive"] }

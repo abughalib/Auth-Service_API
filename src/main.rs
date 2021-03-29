@@ -2,15 +2,17 @@ mod vars;
 mod models;
 mod schema;
 mod errors;
+mod register_handler;
+mod email_service;
+mod utils;
 
+#[macro_use]
 use diesel;
-use serde_json;
-use lettre;
-use native_tls;
+
 use actix_cors::Cors;
 use actix_files::Files;
 use actix_session::CookieSession;
-use actix_web::{middleware, web, App, HttpServer, http::header};
+use actix_web::{middleware, App, HttpServer};
 use diesel::{
   prelude::*,
   r2d2::{self, ConnectionManager}
