@@ -1,10 +1,13 @@
-use diesel::{r2d2::ConnectionManager, PgConnection, Queryable, Insertable};
+
+use diesel::{r2d2::ConnectionManager, PgConnection};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+
+
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
-#[table_name = "confirmations"]
+#[table_name="confirmations"]
 pub struct Confirmation{
   pub id: Uuid,
   pub email: String,
@@ -12,7 +15,7 @@ pub struct Confirmation{
 }
 
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
-#[table_name = "users"]
+#[table_name="users"]
 pub struct User{
   pub id: Uuid,
   pub email: String,
@@ -26,9 +29,9 @@ pub struct SessionUser{
   pub email: String,
 }
 
-impl<T> From<T> for Confirmations where T: Into<String>{
+impl<T> From<T> for Confirmation where T: Into<String>{
   fn from(email: T)->Self{
-    Confirmations {
+    Confirmation {
       id: Uuid::new_v4(),
       email: email.into(),
       expires_at: chrono::Local::now().naive_local()+

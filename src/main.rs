@@ -5,14 +5,18 @@ mod errors;
 mod register_handler;
 mod email_service;
 mod utils;
+mod password_handler;
 
 #[macro_use]
-use diesel;
+extern crate diesel;
+extern crate serde_json;
+extern crate lettre;
+extern crate native_tls;
 
 use actix_cors::Cors;
 use actix_files::Files;
 use actix_session::CookieSession;
-use actix_web::{middleware, App, HttpServer};
+use actix_web::{App, HttpServer, middleware, web};
 use diesel::{
   prelude::*,
   r2d2::{self, ConnectionManager}
@@ -48,6 +52,11 @@ async fn main()->std::io::Result<()>{
           .max_age(3600)
       )
       .service(Files::new("/assets", "./templates/assets"))
+      .service(web::scope("/"))
+      .service(
+        web::resource("/register/{path_id}")
+        .route(web::post().to(password_handler::create_account))
+      )
   })
   .bind(format!("{}:{}", vars::domain(), vars::port()))?
   .run()

@@ -45,12 +45,13 @@ pub fn get_current_user(session: &Session)->Result<SessionUser, AuthError>{
     String::from("Could not retrieve user from session"));
   let session_result = session.get::<String>("user");
 
-    if session_result.is_err(){
-      return Err(err.clone());
-    }
-    session_result
-      .unwrap()
-      .map_or(Err(err),
-        |user_str| serde_json::from_str(&user_str).or_else(|_|
-            Err(err)))
+  if session_result.is_err(){
+    return Err(err.clone());
+  }
+  session_result
+    .unwrap()
+    .map_or(Err(err),
+      |user_str| serde_json::from_str(&user_str).or_else(|_|
+          Err(err)))
 }
+

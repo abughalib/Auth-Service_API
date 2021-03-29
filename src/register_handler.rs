@@ -1,12 +1,11 @@
-use actix_web::{error::BlockingError, http, web, HttpResponse};
-use actix_session::{Session};
+use actix_web::{error::BlockingError, web, HttpResponse};
+use actix_session::Session;
 use serde::Deserialize;
-use yarte::Template;
 
 use {
 	super::email_service::send_confirmation_mail,
 	super::errors::AuthError,
-	super::models::{Confirmations, Pool},
+	super::models::{Confirmation, Pool},
 	super::utils::signed_in;
 };
 
@@ -39,11 +38,11 @@ fn create_confirmation(email: String, pool: &web::Data<Pool>) -> Result<(), Auth
 	send_confirmation_mail(&confirmation)
 }
 
-fn insert_record(email: String, pool: &web::Data<Pool>) -> Result<Confirmations, AuthError>{
+fn insert_record(email: String, pool: &web::Data<Pool>) -> Result<Confirmation, AuthError>{
 
 	use super::schema::confirmations::dsl::confirmations;
 
-	let new_record: Confirmations = email.into();
+	let new_record: Confirmation = email.into();
 
 	let inserted_record = diesel::insert_into(confirmations)
 		.values(&new_record)

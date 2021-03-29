@@ -20,6 +20,10 @@ pub enum AuthError{
 
   #[display(fmt = "AuthenticationError: {}", _0)]
   AuthenticationError(String),
+
+  #[display(fmt = "NotFound: {}", _0)]
+  NotFound(String),
+
 }
 
 impl ResponseError for AuthError{
@@ -39,6 +43,9 @@ impl ResponseError for AuthError{
       },
       AuthError::AuthenticationError(ref message)=>{
         HttpResponse::Unauthorized().json(message)
+      },
+      AuthError::NotFound(ref message)=>{
+        HttpResponse::NotFound().json(message)
       }
     }
   }
@@ -46,7 +53,7 @@ impl ResponseError for AuthError{
 
 impl From<UuidError> for AuthError{
   fn from(_: UuidError) -> Self {
-      AuthError::BadId
+    AuthError::BadId
   }
 }
 

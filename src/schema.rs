@@ -1,4 +1,12 @@
 table! {
+    confirmations (id) {
+        id -> Uuid,
+        email -> Varchar,
+        expires_at -> Timestamp,
+    }
+}
+
+table! {
     users (id) {
         id -> Uuid,
         email -> Varchar,

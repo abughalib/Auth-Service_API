@@ -1,14 +1,14 @@
 
-use lettre:: {ClientSecurity, ClientTlsParameters, SendableEmail, SmtpClient, Transport, smtp:: {
+use lettre:: {ClientSecurity, ClientTlsParameters, SmtpClient, Transport, smtp:: {
     ConnectionReuseParameters,
     authentication::{Credentials, Mechanism}
   }};
 
-use lettre_email::{Email, EmailBuilder};
+use lettre_email::Email;
 use native_tls::{Protocol, TlsConnector};
-use super::{models::Confirmations, errors::AuthError, vars};
+use super::{models::Confirmation, errors::AuthError, vars};
 
-pub fn send_confirmation_mail(confirmation: &Confirmations)->Result<(), AuthError>{
+pub fn send_confirmation_mail(confirmation: &Confirmation)->Result<(), AuthError>{
   let domain_url = vars::domain_url();
   let expires = confirmation.expires_at.format("%I:%M %p %A, %-d %B, %C%y").to_string();
 
