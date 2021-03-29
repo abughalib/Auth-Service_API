@@ -1,6 +1,8 @@
 use argonautica::{Hasher, Verifier};
 use actix_session::Session;
-use actix_web::{HttpRequest, http::header::CONTENT_TYPE};
+use actix_web::{
+  HttpRequest, http::header::{CONTENT_TYPE, LOCATION}, HttpResponse,
+};
 
 use super::{errors::AuthError, vars, models::SessionUser};
 
@@ -61,3 +63,6 @@ pub fn get_current_user(session: &Session)->Result<SessionUser, AuthError>{
           Err(err)))
 }
 
+pub fn to_home()->HttpResponse{
+  HttpResponse::Found().header(LOCATION, "/me").finish()
+}

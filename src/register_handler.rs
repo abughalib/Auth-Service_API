@@ -2,13 +2,15 @@ use actix_web::{error::BlockingError, web, HttpResponse};
 use actix_session::Session;
 use diesel::RunQueryDsl;
 use serde::Deserialize;
+use yarte::TemplateTrait;
 
 
 use {
 	super::email_service::send_confirmation_mail,
 	super::errors::AuthError,
 	super::models::{Confirmation, Pool},
-	super::utils::is_signed_in,
+  super::templates::Register,
+	super::utils::{is_signed_in, to_home},
 };
 
 #[derive(Deserialize)]
@@ -33,6 +35,19 @@ pub async fn send_confirmation(session: Session,
 			}
 		},
 	}
+}
+
+pub async fn show_confirmation_form(session: Session)->Result<HttpResponse, AuthError>{
+  if is_signed_in(&session){
+    Ok(to_home())
+  }else{
+    let template = Register{
+      sent: false,
+      error: None
+    };
+
+    Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(template.call().unwrap()))
+  }
 }
 
 fn create_confirmation(email: String, pool: &web::Data<Pool>) -> Result<(), AuthError>{
