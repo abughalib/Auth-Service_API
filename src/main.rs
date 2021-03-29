@@ -6,6 +6,7 @@ mod register_handler;
 mod email_service;
 mod utils;
 mod password_handler;
+mod templates;
 
 #[macro_use]
 extern crate diesel;
@@ -56,6 +57,11 @@ async fn main()->std::io::Result<()>{
       .service(
         web::resource("/register/{path_id}")
         .route(web::post().to(password_handler::create_account))
+      )
+      .service(web::scope("/")
+        .service(web::resource("/register")
+          .route(web::post().to(register_handler::send_confirmation))
+        )
       )
   })
   .bind(format!("{}:{}", vars::domain(), vars::port()))?
