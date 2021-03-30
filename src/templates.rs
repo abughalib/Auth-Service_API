@@ -1,4 +1,3 @@
-use actix_session::Session;
 use yarte::Template;
 use super::models::SessionUser;
 
@@ -21,4 +20,10 @@ pub struct Password {
 #[template(path = "pages/me.hbs")]
 pub struct Me {
   pub user: SessionUser
+}
+
+#[derive(Template)]
+#[template(path = "pages/sign_in.hbs")]
+pub struct SignIn{
+  pub error: Option<String>,
 }

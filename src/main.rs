@@ -85,15 +85,15 @@ async fn main() -> std::io::Result<()> {
 				.route(web::get().to(auth_handler::sign_out))
 				.route(web::delete().to(auth_handler::sign_out)),
 			)
-			// .service(
-			// 	web::resource("/signin")
-			// 	.route(web::get().to(auth_handler::show_sign_in_form))
-			// 	.route(web::post().to(auth_handler::sign_in)),
-			// )
-			// .route(
-			// 	"/signin2",
-			// 	web::post().to(auth_handler::sign_in_for_browser),
-			// ),
+			.service(
+				web::resource("/signin")
+				.route(web::get().to(auth_handler::show_sign_in_form))
+				.route(web::post().to(auth_handler::sign_in)),
+			)
+			.route(
+				"/signin2",
+				web::post().to(auth_handler::sign_in_for_browser),
+			),
 		)
 	})
 	.bind(format!("{}:{}", vars::domain(), vars::port()))?
