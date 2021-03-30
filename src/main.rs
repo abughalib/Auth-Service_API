@@ -7,6 +7,7 @@ mod schema;
 mod templates;
 mod utils;
 mod vars;
+mod auth_handler;
 
 #[macro_use]
 extern crate diesel;
@@ -65,25 +66,25 @@ async fn main() -> std::io::Result<()> {
 				.route(web::get().to(register_handler::show_confirmation_form))
 				.route(web::post().to(register_handler::send_confirmation)),
 			)
-			// .service(
-			// 	web::resource("/register/{path_id}")
-			// 	.route(web::get().to(password_handler::show_password_form))
-			// 	.route(web::post().to(password_handler::create_account)),
-			// )
-			// .route(
-			// 	"/register2/{path_id}",
-			// 	web::post().to(password_handler::create_account_for_browser),
-			// )
+			.service(
+				web::resource("/register/{path_id}")
+				.route(web::get().to(password_handler::show_password_form))
+				.route(web::post().to(password_handler::create_account)),
+			)
+			.route(
+				"/register2/{path_id}",
+				web::post().to(password_handler::create_account_for_browser),
+			)
 			// .route(
 			// 	"/register2",
 			// 	web::post().to(register_handler::send_confirmation_for_browser),
 			// )
-			// .route("/me", web::get().to(auth_handler::me))
-			// .service(
-			// 	web::resource("/signout")
-			// 	.route(web::get().to(auth_handler::sign_out))
-			// 	.route(web::delete().to(auth_handler::sign_out)),
-			// )
+			.route("/me", web::get().to(auth_handler::me))
+			.service(
+				web::resource("/signout")
+				.route(web::get().to(auth_handler::sign_out))
+				.route(web::delete().to(auth_handler::sign_out)),
+			)
 			// .service(
 			// 	web::resource("/signin")
 			// 	.route(web::get().to(auth_handler::show_sign_in_form))
