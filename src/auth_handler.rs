@@ -8,7 +8,6 @@ use actix_web::{
 use diesel::prelude::*;
 use serde::Deserialize;
 use yarte::Template;
-use yarte::TemplateTrait;
 
 use super::{
   models::{Pool, SessionUser, User},
