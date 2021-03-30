@@ -17,23 +17,17 @@ extern crate serde_json;
 
 use actix_cors::Cors;
 use actix_files::Files;
+
 use actix_session::CookieSession;
 use actix_web::{middleware, web, App, HttpServer};
 use diesel::{
-	prelude::*,
-	r2d2::{self, ConnectionManager},
+  prelude::*,
+  r2d2::{self, ConnectionManager},
 };
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-	use actix_cors::Cors;
-	use actix_files::Files;
-	use actix_redis::RedisSession;
-	use actix_web::{middleware, web, App, HttpServer};
-	use diesel::{
-		prelude::*,
-		r2d2::{self, ConnectionManager},
-	};
+
 	
 	std::env::set_var("RUST_LOG", "actix_web=info,actix_server=info");
 	env_logger::init();
@@ -51,9 +45,13 @@ async fn main() -> std::io::Result<()> {
 		// enable logger
 		.wrap(middleware::Logger::default())
 		// Enable sessions
-		.wrap(RedisSession::new("127.0.0.1:6379", &[0; 32]))
+    .wrap(
+      CookieSession::signed(&[0; 32])
+        .secure(true),
+    )
 		.wrap(
 			Cors::default()
+      .allow_any_origin()
 			.allowed_methods(vec!["GET", "POST", "DELETE", "OPTIONS"])
 			.max_age(3600)
 		)
@@ -75,10 +73,10 @@ async fn main() -> std::io::Result<()> {
 				"/register2/{path_id}",
 				web::post().to(password_handler::create_account_for_browser),
 			)
-			// .route(
-			// 	"/register2",
-			// 	web::post().to(register_handler::send_confirmation_for_browser),
-			// )
+			.route(
+				"/register2",
+				web::post().to(register_handler::send_confirmation_for_browser),
+			)
 			.route("/me", web::get().to(auth_handler::me))
 			.service(
 				web::resource("/signout")

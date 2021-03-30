@@ -50,6 +50,22 @@ pub async fn show_confirmation_form(session: Session)->Result<HttpResponse, Auth
   }
 }
 
+pub async fn send_confirmation_for_browser(data: web::Form<RegisterData>,
+  pool: web::Data<Pool>) -> Result<HttpResponse, AuthError> {
+  let result = web::block(move || create_confirmation(data.into_inner().email, &pool)).await;
+  let template = match result {
+      Ok(_) => Register { sent: true, error: None },
+      Err(err) => match err {
+          BlockingError::Error(auth_error) => Register { sent: false, error: Some(auth_error.to_string()) },
+          BlockingError::Canceled => {
+              Register { sent: false, error: Some(String::from("Could not complete the process")) }
+          }
+      },
+  };
+
+  Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(template.call().unwrap()))
+}
+
 fn create_confirmation(email: String, pool: &web::Data<Pool>) -> Result<(), AuthError>{
 	let confirmation = insert_record(email, pool)?;
 	send_confirmation_mail(&confirmation)
