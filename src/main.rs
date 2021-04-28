@@ -8,6 +8,7 @@ mod templates;
 mod utils;
 mod vars;
 mod auth_handler;
+mod tests;
 
 #[macro_use]
 extern crate diesel;
@@ -19,11 +20,19 @@ use actix_cors::Cors;
 use actix_files::Files;
 
 use actix_session::CookieSession;
-use actix_web::{middleware, web, App, HttpServer};
+use actix_web::{App, HttpRequest, HttpResponse, HttpServer, http::header, middleware, web};
 use diesel::{
   prelude::*,
   r2d2::{self, ConnectionManager},
 };
+
+async fn index(req: HttpRequest)->HttpResponse{
+	if let Some(_) = req.headers().get(header::CONTENT_TYPE){
+		HttpResponse::Ok().into()
+	}else{
+		HttpResponse::BadRequest().into()
+	}
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -59,6 +68,7 @@ async fn main() -> std::io::Result<()> {
 		// Routes
 		.service(
 			web::scope("/")
+    .service(web::resource("").route(web::get().to(index)))
 			.service(
 				web::resource("/register")
 				.route(web::get().to(register_handler::show_confirmation_form))
@@ -70,11 +80,11 @@ async fn main() -> std::io::Result<()> {
 				.route(web::post().to(password_handler::create_account)),
 			)
 			.route(
-				"/register2/{path_id}",
+				"/signup/{path_id}",
 				web::post().to(password_handler::create_account_for_browser),
 			)
 			.route(
-				"/register2",
+				"/signup",
 				web::post().to(register_handler::send_confirmation_for_browser),
 			)
 			.route("/me", web::get().to(auth_handler::me))
@@ -89,7 +99,7 @@ async fn main() -> std::io::Result<()> {
 				.route(web::post().to(auth_handler::sign_in)),
 			)
 			.route(
-				"/signin2",
+				"/login",
 				web::post().to(auth_handler::sign_in_for_browser),
 			),
 		)
