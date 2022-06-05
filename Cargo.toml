@@ -1,29 +1,29 @@
 [package]
 name = "auth_service"
 version = "0.1.0"
-authors = ["abugh <abugh@gmail.com>"]
-edition = "2018"
+authors = ["abugh <abughalib64@gmail.com>"]
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-files = "0.5.0"
-actix-rt = "2.2.0"
-actix-session = "0.4.1"
-actix-web = "3.3.2"
-argonautica = "0.2.0"
-chrono = { version = "0.4.19", features = ["serde"] }
-derive_more = "0.99.13"
-diesel = { version = "1.4.6", features = ["postgres", "uuidv07", "r2d2", "chrono"] }
-dotenv = "0.15.0"
-env_logger = "0.8.3"
-lettre = "0.9.5"
-lettre_email = "0.9.4"
-native-tls = "0.2.4"
-r2d2 = "0.8.8"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-uuid = { version = "0.8.2", features = ["serde", "v4"] }
-yarte="0.15.3"
-actix-cors="0.5.4"
-actix-redis="0.9.2"
+actix-files = "0.6"
+actix-rt = "2.2"
+actix-session = {version = "0.6", features = ["cookie-session"]}
+actix-web = "4.0"
+argonautica = "0.2"
+chrono = { version = "0.4", features = ["serde"] }
+derive_more = "0.99"
+diesel = { version = "1.4", features = ["postgres", "uuidv07", "r2d2", "chrono", "uuid"] }
+dotenv = "0.15"
+env_logger = "0.9"
+lettre = "0.9"
+lettre_email = "0.9"
+native-tls = "0.2"
+r2d2 = "0.8"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+uuid = { version = "0.8", features = ["serde", "v4"] }
+yarte="0.15"
+actix-cors="0.6"
+actix-redis="0.11"
