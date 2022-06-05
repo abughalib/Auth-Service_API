@@ -3,10 +3,7 @@ use yarte::Template;
 
 #[derive(Template)]
 #[template(path="pages/help_page.hbs")]
-pub struct HomePage {
-    pub sent: bool,
-    pub error: Option<String>
-}
+pub struct HomePage {}
 
 #[derive(Template)]
 #[template(path = "pages/register.hbs")]
