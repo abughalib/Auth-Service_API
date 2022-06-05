@@ -18,8 +18,10 @@ extern crate serde_json;
 
 use actix_cors::Cors;
 use actix_files::Files;
+use actix_session::{SessionMiddleware, storage::CookieSessionStore};
 use yarte::TemplateTrait;
 use actix_web::{middleware, web, App, HttpRequest, HttpResponse, HttpServer};
+use actix_web::cookie::Key;
 use diesel::{
     prelude::*,
     r2d2
@@ -38,6 +40,7 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info,actix_server=info");
     env_logger::init();
 
+    let secret_key = Key::generate();
 
     let manager = r2d2::ConnectionManager::<PgConnection>::new(vars::database_url().as_str());
 
@@ -53,6 +56,9 @@ async fn main() -> std::io::Result<()> {
             // enable logger
             .wrap(middleware::Logger::default())
             // Enable sessions
+            .wrap(SessionMiddleware::new(CookieSessionStore::default(), secret_key.clone()))
+            .default_service(web::to(|| HttpResponse::Ok()))
+            //Cors
             .wrap(
                 Cors::default()
                     .allowed_origin("127.0.0.1")
