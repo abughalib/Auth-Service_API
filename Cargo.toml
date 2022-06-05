@@ -1,6 +1,6 @@
 [package]
 name = "auth_service"
-version = "0.1.0"
+version = "0.1.2"
 authors = ["abugh <abughalib64@gmail.com>"]
 edition = "2021"
 
