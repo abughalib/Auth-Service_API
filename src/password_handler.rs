@@ -65,11 +65,11 @@ fn create_user(
     pool: &web::Data<Pool>,
 ) -> Result<SessionUser, AuthError> {
     let path_uuid = uuid::Uuid::parse_str(path_id)?;
-    let conn = &pool.get().unwrap();
+    let mut conn = &pool.get().unwrap();
 
     confirmations
         .filter(id.eq(path_uuid))
-        .load::<Confirmation>(conn)
+        .load::<Confirmation>(&mut conn)
         .map_err(|_db_err| AuthError::NotFound(String::from("Confirmation not found")))
         .and_then(|mut result| {
             if let Some(confirmation) = result.pop() {
@@ -77,7 +77,7 @@ fn create_user(
                     let password: String = hash_password(password)?;
                     let user: User = diesel::insert_into(users)
                         .values(&User::from(confirmation.email, password))
-                        .get_result(conn)?;
+                        .get_result(&mut conn)?;
 
                     return Ok(user.into());
                 }
@@ -157,7 +157,7 @@ fn get_invitation(path_id: &str, pool: &web::Data<Pool>) -> Result<Confirmation,
 
     if let Ok(record) = confirmations
         .find(path_uuid)
-        .get_result::<Confirmation>(&pool.get().unwrap())
+        .get_result::<Confirmation>(&mut pool.get().unwrap())
     {
         Ok(record)
     } else {

@@ -105,7 +105,7 @@ fn find_user(data: AuthData, pool: &web::Data<Pool>) -> Result<SessionUser, Auth
 
     let mut items = users
         .filter(email.eq(&data.email))
-        .load::<User>(&pool.get().unwrap())?;
+        .load::<User>(&mut pool.get().unwrap())?;
 
     if let Some(user) = items.pop() {
         if let Ok(matching) = verify(&user.hash, &data.password) {

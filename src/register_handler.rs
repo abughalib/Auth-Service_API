@@ -83,7 +83,7 @@ fn insert_record(email: String, pool: &web::Data<Pool>) -> Result<Confirmation, 
 
     let inserted_record = diesel::insert_into(confirmations)
         .values(&new_record)
-        .get_result(&pool.get().unwrap())?;
+        .get_result(&mut pool.get().unwrap())?;
 
     Ok(inserted_record)
 }
