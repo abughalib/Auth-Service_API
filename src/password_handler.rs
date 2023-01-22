@@ -36,16 +36,12 @@ pub async fn create_account(
             .await;
 
     match result {
-        Ok(user) => {
-            match user {
-                Ok(usr)=>{
-                    set_current_user(&session, &usr);
-                    Ok(HttpResponse::Created().json(&usr))
-                },
-                Err(e)=>{
-                    Err(e)
-                }
+        Ok(user) => match user {
+            Ok(usr) => {
+                set_current_user(&session, &usr);
+                Ok(HttpResponse::Created().json(&usr))
             }
+            Err(e) => Err(e),
         },
         // Err(err) => match err {
         //     BlockingError::Error(auth_error) => Err(auth_error),
@@ -53,9 +49,9 @@ pub async fn create_account(
         //         "Could not complete the process",
         //     ))),
         // },
-        Err(_e)=> Err(AuthError::GenericError(String::from(
-                    "Could not complete the process",
-                )))
+        Err(_e) => Err(AuthError::GenericError(String::from(
+            "Could not complete the process",
+        ))),
     }
 }
 
@@ -65,28 +61,30 @@ fn create_user(
     pool: &web::Data<Pool>,
 ) -> Result<SessionUser, AuthError> {
     let path_uuid = uuid::Uuid::parse_str(path_id)?;
-    let mut conn = &pool.get().unwrap();
+    if let Ok(mut conn) = pool.get() {
+        confirmations
+            .filter(id.eq(path_uuid))
+            .load::<Confirmation>(&mut conn)
+            .map_err(|_db_err| AuthError::NotFound(String::from("Confirmation not found")))
+            .and_then(|mut result| {
+                if let Some(confirmation) = result.pop() {
+                    if confirmation.expires_at > chrono::Local::now().naive_utc() {
+                        let password: String = hash_password(password)?;
+                        let user: User = diesel::insert_into(users)
+                            .values(&User::from(confirmation.email, password))
+                            .get_result(&mut conn)?;
 
-    confirmations
-        .filter(id.eq(path_uuid))
-        .load::<Confirmation>(&mut conn)
-        .map_err(|_db_err| AuthError::NotFound(String::from("Confirmation not found")))
-        .and_then(|mut result| {
-            if let Some(confirmation) = result.pop() {
-                if confirmation.expires_at > chrono::Local::now().naive_utc() {
-                    let password: String = hash_password(password)?;
-                    let user: User = diesel::insert_into(users)
-                        .values(&User::from(confirmation.email, password))
-                        .get_result(&mut conn)?;
-
-                    return Ok(user.into());
+                        return Ok(user.into());
+                    }
                 }
-            }
 
-            Err(AuthError::AuthenticationError(String::from(
-                "Invalid confirmation",
-            )))
-        })
+                Err(AuthError::AuthenticationError(String::from(
+                    "Invalid confirmation",
+                )))
+            })
+    } else {
+        return Err(AuthError::AuthenticationError(String::from("Cannot Connect to Database")));
+    }
 }
 
 pub async fn show_password_form(
@@ -128,17 +126,13 @@ pub async fn create_account_for_browser(
     let result = web::block(move || create_user(&id_str, &data.into_inner().password, &pool)).await;
 
     match result {
-        Ok(user) => {
-            match user {
-                Ok(usr)=>{
-                    set_current_user(&session, &usr);
-                    Ok(to_home())
-                },
-                Err(e)=>{
-                    Err(e)
-                }
+        Ok(user) => match user {
+            Ok(usr) => {
+                set_current_user(&session, &usr);
+                Ok(to_home())
             }
-        }
+            Err(e) => Err(e),
+        },
         Err(_) => {
             let t = Password {
                 path_id: id_str2,

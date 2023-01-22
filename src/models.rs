@@ -6,7 +6,7 @@ use uuid::Uuid;
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
-#[table_name = "confirmations"]
+#[diesel(table_name = confirmations)]
 pub struct Confirmation {
     pub id: Uuid,
     pub email: String,
