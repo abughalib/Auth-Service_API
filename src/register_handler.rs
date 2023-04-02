@@ -18,7 +18,7 @@ pub struct RegisterData {
 }
 
 pub async fn send_confirmation(
-    session: Session,
+    //session: Session,
     data: web::Json<RegisterData>,
     pool: web::Data<Pool>,
 ) -> Result<HttpResponse, AuthError> {
@@ -31,7 +31,7 @@ pub async fn send_confirmation(
         Ok(_) => Ok(HttpResponse::Ok().finish()),
         Err(_) => Err(AuthError::GenericError(String::from(
             "Could not complete the process",
-        )))
+        ))),
     }
 }
 
@@ -63,7 +63,7 @@ pub async fn send_confirmation_for_browser(
         Err(_) => Register {
             sent: false,
             error: Some(String::from("Could not complete the process")),
-        }
+        },
     };
 
     Ok(HttpResponse::Ok()
@@ -73,7 +73,8 @@ pub async fn send_confirmation_for_browser(
 
 fn create_confirmation(email: String, pool: &web::Data<Pool>) -> Result<(), AuthError> {
     let confirmation = insert_record(email, pool)?;
-    send_confirmation_mail(&confirmation)
+    let subject: &str = "Registration Confirmation Mail";
+    send_confirmation_mail(&confirmation, subject)
 }
 
 fn insert_record(email: String, pool: &web::Data<Pool>) -> Result<Confirmation, AuthError> {

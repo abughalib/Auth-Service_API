@@ -44,6 +44,7 @@ pub fn smtp_host() -> String {
     var("SMTP_HOST").expect("SMTP_HOST is not set")
 }
 
+#[allow(dead_code)]
 pub fn smtp_port() -> u16 {
     dotenv().ok();
     var("SMTP_PORT")
@@ -57,4 +58,9 @@ pub fn smtp_port() -> u16 {
 pub fn smtp_sender_name() -> String {
     dotenv().ok();
     var("SMTP_SENDER_NAME").expect("SMTP_SENDER_NAME is not set")
+}
+
+pub fn smtp_sender_email() -> String {
+    dotenv().ok();
+    var("SMTP_SENDER_EMAIL").expect("SMTP_SENDER_EMAIL is not set")
 }

@@ -14,7 +14,7 @@ pub struct Confirmation {
 }
 
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
-#[table_name = "users"]
+#[diesel(table_name = users)]
 pub struct User {
     pub id: Uuid,
     pub email: String,
