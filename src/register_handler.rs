@@ -18,7 +18,7 @@ pub struct RegisterData {
 }
 
 pub async fn send_confirmation(
-    //session: Session,
+    session: Session,
     data: web::Json<RegisterData>,
     pool: web::Data<Pool>,
 ) -> Result<HttpResponse, AuthError> {
